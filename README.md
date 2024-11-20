@@ -1,6 +1,7 @@
 # Script for checking if there are no replied contacts
 
-Use `python -m venv ./.venv` to create a virtual python environment.  
-Activate the environment with `source .venv/bin/activate` (Linux) or `.\.venv\Scripts\activate.bat` (Windows).  
-After that install all dependencies with `pip install -r requirements.txt`.  
-You can turn the python file into an executable with the command `auto-py-to-exe`.
+- `python -m venv ./.venv`: Use this command to create a virtual python environment.
+- `source .venv/bin/activate`: Use this command in Linux to activate the environment.
+- `.\.venv\Scripts\activate.bat`: Use this command in Windows to activate the environment.
+- `pip install -r requirements.txt`: Use this command to install all dependencies.
+- `auto-py-to-exe`: Use this programm to compile the python file to an executable
