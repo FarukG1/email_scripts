@@ -160,7 +160,10 @@ cython_debug/
 #.idea/
 
 # Initial configuration
-.ini
+*.ini
 
 # CSV Files
-.csv
+*.csv
+
+# Output Folder
+output/
