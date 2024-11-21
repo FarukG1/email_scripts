@@ -206,16 +206,27 @@ def main():
     )
 
     colors.print("green", "Reading CSV file...")
-    csv_rows = []
+    csv_header = list()
+    csv_rows = list()
+    non_csv_rows = list()
     with open(selected_file, "r", encoding="utf-8") as csvfile:
         csv_reader = csv.reader(csvfile)
         email_index = 0
+
+        # Get headers
         for row in csv_reader:
-            for index, column in enumerate(row):
-                if "email" in column.lower():
-                    email_index = index
-                    break
+            csv_header = row
             break
+
+        # Get email index
+        for index, column in enumerate(csv_header):
+            if "email" in column.lower():
+                email_index = index
+                break
+        for address in set(sent_addresses).difference(set(inbox_addresses)):
+            # Write empty strings for each column and for the email column insert adress
+            non_csv_rows.append([None] * len(csv_header))
+            non_csv_rows[-1][email_index] = address
 
         for row in csv_reader:
             if row[email_index] in set(sent_addresses).difference(set(inbox_addresses)):
@@ -230,20 +241,8 @@ def main():
         writer = csv.writer(
             csvfile, delimiter=",", quotechar="|", quoting=csv.QUOTE_MINIMAL
         )
-        writer.writerow(
-            [
-                "Name",
-                "Handle",
-                "Link",
-                "Followers",
-                "Gender",
-                "Email",
-                "Location",
-                "",
-                "",
-                "",
-            ]
-        )
+        writer.writerow(csv_header)
+        writer.writerows(non_csv_rows)
         writer.writerows(csv_rows)
 
     print("\n")
