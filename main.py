@@ -9,27 +9,46 @@ from imapclient import IMAPClient
 class Colors:
     """Farben für die Ausgabe im Terminal."""
 
+    purple = "\033[95m"
+    blue = "\033[94m"
+    cyan = "\033[96m"
+    green = "\033[92m"
+    warning = "\033[93m"
+    error = "\033[91m"
+    reset = "\033[0m"
+    bold = "\033[1m"
+    underline = "\033[4m"
+
     def __init__(self):
         """Initialisiert die Klasse."""
         self.__dir__ = {
-            "PURPLE": "\033[95m",
-            "BLUE": "\033[94m",
-            "CYAN": "\033[96m",
-            "GREEN": "\033[92m",
-            "WARNING": "\033[93m",
-            "ERROR": "\033[91m",
-            "RESET": "\033[0m",
-            "BOLD": "\033[1m",
-            "UNDERLINE": "\033[4m",
+            "purple": "\033[95m",
+            "blue": "\033[94m",
+            "cyan": "\033[96m",
+            "green": "\033[92m",
+            "warning": "\033[93m",
+            "error": "\033[91m",
+            "reset": "\033[0m",
+            "bold": "\033[1m",
+            "underline": "\033[4m",
         }
+        self.purple = "\033[95m"
+        self.blue = "\033[94m"
+        self.cyan = "\033[96m"
+        self.green = "\033[92m"
+        self.warning = "\033[93m"
+        self.error = "\033[91m"
+        self.reset = "\033[0m"
+        self.bold = "\033[1m"
+        self.underline = "\033[4m"
 
     def print(self, color, text):
         """Fügt Farbe zum Text hinzu."""
-        return print(f"{self.__dir__[color]}{text}{self.__dir__["RESET"]}")
+        return print(f"{self.__dir__[color]}{text}{self.__dir__["reset"]}")
 
     def colored(self, color, text):
         """Fügt Farbe zum Text hinzu."""
-        return f"{self.__dir__[color]}{text}{self.__dir__["RESET"]}"
+        return f"{self.__dir__[color]}{text}{self.__dir__["reset"]}"
 
 
 class Emails:
@@ -89,6 +108,22 @@ def main():
     # Initialize colors class
     colors = Colors()
 
+    # Print ASCII Art
+    print(
+        rf"""
+{colors.purple}$$$$$$$$\                         $$\ $$\        {colors.warning}$$$$$$\                      $$\             $$\
+{colors.purple}$$  _____|                        \__|$$ |      {colors.warning}$$  __$$\                     \__|            $$ |
+{colors.purple}$$ |      $$$$$$\$$$$\   $$$$$$\  $$\ $$ |      {colors.warning}$$ /  \__| $$$$$$$\  $$$$$$\  $$\  $$$$$$\  $$$$$$\
+{colors.purple}$$$$$\    $$  _$$  _$$\  \____$$\ $$ |$$ |      {colors.warning}\$$$$$$\  $$  _____|$$  __$$\ $$ |$$  __$$\ \_$$  _|
+{colors.purple}$$  __|   $$ / $$ / $$ | $$$$$$$ |$$ |$$ |       {colors.warning}\____$$\ $$ /      $$ |  \__|$$ |$$ /  $$ |  $$ |
+{colors.purple}$$ |      $$ | $$ | $$ |$$  __$$ |$$ |$$ |      {colors.warning}$$\   $$ |$$ |      $$ |      $$ |$$ |  $$ |  $$ |$$\
+{colors.purple}$$$$$$$$\ $$ | $$ | $$ |\$$$$$$$ |$$ |$$ |      {colors.warning}\$$$$$$  |\$$$$$$$\ $$ |      $$ |$$$$$$$  |  \$$$$  |
+{colors.purple}\________|\__| \__| \__| \_______|\__|\__|       {colors.warning}\______/  \_______|\__|      \__|$$  ____/    \____/
+                                                                                  {colors.warning}$$ |
+                                                                                  {colors.warning}$$ |
+                                                                                  {colors.warning}\__|{colors.reset}""",
+    )
+
     # Generate initial configuration file
     if not os.path.exists("./script.ini"):
         config = configparser.ConfigParser()
@@ -101,7 +136,7 @@ def main():
         with open("./script.ini", "w", encoding="utf-8") as configfile:
             config.write(configfile)
         colors.print(
-            "ERROR",
+            "error",
             "Please fill out the configuration file (script.ini) and run the script again.",
         )
         return 0
@@ -113,11 +148,11 @@ def main():
     sent_addresses = []
     inbox_addresses = []
     for user in emails.users:
-        colors.print("CYAN", f"Fetching emails for {user[0]}...")
+        colors.print("cyan", f"Fetching emails for {user[0]}...")
         sent_mails, inbox_mails = emails.fetch_one_user(user[0], user[1])
 
         # Fetch sent emails
-        # colors.print("CYAN", "Fetching sent emails...")
+        # colors.print("cyan", "Fetching sent emails...")
         for _, data in sent_mails.items():
             envelope = data[b"ENVELOPE"]
             address = (
@@ -128,7 +163,7 @@ def main():
             sent_addresses.append(address)
 
         # Fetch inbox emails
-        # colors.print("CYAN", "Fetching inbox emails...")
+        # colors.print("cyan", "Fetching inbox emails...")
         for _, data in inbox_mails.items():
             envelope = data[b"ENVELOPE"]
             address = (
@@ -143,11 +178,12 @@ def main():
     inbox_addresses = [address.lower() for address in inbox_addresses]
 
     # Print count of sent and inbox emails
+    print("\n")
     colors.print(
-        "PURPLE", "Sent Email Addresses Count: " + str(len(set(sent_addresses)))
+        "purple", "Sent Email Addresses Count: " + str(len(set(sent_addresses)))
     )
     colors.print(
-        "PURPLE", "Inbox Email Addresses Count: " + str(len(set(inbox_addresses)))
+        "purple", "Inbox Email Addresses Count: " + str(len(set(inbox_addresses)))
     )
 
     count = 0
@@ -155,21 +191,21 @@ def main():
     for address in set(sent_addresses).difference(set(inbox_addresses)):
         csv_rows.append([address])
         count += 1
-    colors.print("PURPLE", f"Total No-Replys Email Addresses: {count + 1}\n\n")
+    colors.print("purple", f"Total No-Replys Email Addresses: {count + 1}\n\n")
 
     selected_file = open_file_explorer()
 
     if not selected_file:
-        colors.print("ERROR", "No file selected.")
-        input(colors.colored("ERROR", "Press Enter to exit and try again..."))
+        colors.print("error", "No file selected.")
+        input(colors.colored("error", "Press Enter to exit and try again..."))
         return 0
 
     colors.print(
-        "GREEN",
+        "green",
         f'Selected File: "\x1b]8;;file://{selected_file}/\x1b\\{selected_file}\x1b]8;;\x1b\\"',
     )
 
-    colors.print("GREEN", "Reading CSV file...")
+    colors.print("green", "Reading CSV file...")
     csv_rows = []
     with open(selected_file, "r", encoding="utf-8") as csvfile:
         csv_reader = csv.reader(csvfile)
@@ -187,7 +223,7 @@ def main():
 
     filename = selected_file.split(".csv")[0] + "_no_reply.csv"
     colors.print(
-        "GREEN",
+        "green",
         f'Writing CSV file to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
     )
     with open(filename, "w", newline="", encoding="utf-8") as csvfile:
@@ -211,7 +247,7 @@ def main():
         writer.writerows(csv_rows)
 
     print("\n")
-    input(colors.colored("GREEN", "Press Enter to exit..."))
+    input(colors.colored("green", "Press Enter to exit..."))
     return 0
 
 
