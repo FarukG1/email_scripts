@@ -223,8 +223,8 @@ def main():
             if "email" in column.lower():
                 email_index = index
                 break
+
         for address in set(sent_addresses).difference(set(inbox_addresses)):
-            # Write empty strings for each column and for the email column insert adress
             non_csv_rows.append([None] * len(csv_header))
             non_csv_rows[-1][email_index] = address
 

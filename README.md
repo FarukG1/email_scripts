@@ -5,3 +5,7 @@
 - `.\.venv\Scripts\activate.bat`: Use this command in Windows to activate the environment.
 - `pip install -r requirements.txt`: Use this command to install all dependencies.
 - `auto-py-to-exe`: Use this programm to compile the python file to an executable
+
+## Custom PyInstaller Command (for mac):
+
+`pyinstaller --noconfirm --onefile --console --name "email_script"  "A:\Development\Python\Email Script\main.py"`
