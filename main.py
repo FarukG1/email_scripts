@@ -218,7 +218,7 @@ def main():
             csv_header = row
             break
 
-        # Get email index
+        # Get email header index
         for index, column in enumerate(csv_header):
             if "email" in column.lower():
                 email_index = index
@@ -231,11 +231,15 @@ def main():
         for row in csv_reader:
             if row[email_index] in set(sent_addresses).difference(set(inbox_addresses)):
                 csv_rows.append(row)
+                array = [None] * len(csv_header)
+                array[email_index] = row[email_index]
+                if array in non_csv_rows:
+                    non_csv_rows.remove(array)
 
     filename = selected_file.split(".csv")[0] + "_no_reply.csv"
     colors.print(
         "green",
-        f'Writing CSV file to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
+        f'Writing data to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
     )
     with open(filename, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(
