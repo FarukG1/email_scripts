@@ -44,11 +44,11 @@ class Colors:
 
     def print(self, color, text):
         """Fügt Farbe zum Text hinzu."""
-        return print(f"{self.__dir__[color]}{text}{self.__dir__["reset"]}")
+        return print(f"{self.__dir__[color]}{text}{self.reset}")
 
     def colored(self, color, text):
         """Fügt Farbe zum Text hinzu."""
-        return f"{self.__dir__[color]}{text}{self.__dir__["reset"]}"
+        return f"{self.__dir__[color]}{text}{self.reset}"
 
 
 class Emails:
