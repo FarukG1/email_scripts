@@ -41,6 +41,7 @@ class Colors:
         self.reset = "\033[0m"
         self.bold = "\033[1m"
         self.underline = "\033[4m"
+        os.system("color")
 
     def print(self, color, text):
         """Fügt Farbe zum Text hinzu."""
@@ -186,6 +187,7 @@ def main():
         "purple", "Inbox Email Addresses Count: " + str(len(set(inbox_addresses)))
     )
 
+    # Print no-reply email addresses
     count = 0
     csv_rows = []
     for address in set(sent_addresses).difference(set(inbox_addresses)):
