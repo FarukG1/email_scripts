@@ -75,7 +75,7 @@ class Send:
         server = IMAPClient(self.imap["host"])
         server.login(self.smtp["username"], self.smtp["password"])
         server.select_folder(self.imap["sent_folder"])
-        server.append(self.imap["sent_folder"], msg.as_string())
+        server.append(self.imap["sent_folder"], msg.as_string(), flags=[b"\\Seen"])
         server.close_folder()
         server.logout()
         return True
