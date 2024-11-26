@@ -2,6 +2,7 @@
 
 import os
 import csv
+
 import configparser
 import tkinter as tk
 from tkinter import filedialog
@@ -9,6 +10,9 @@ from tkinter import filedialog
 from scripts.colors import Colors
 from scripts.fetch import Fetch
 from scripts.send import Send
+from scripts.html import HTML
+
+# from scripts.menu import Menu
 
 tk.Tk().withdraw()
 
@@ -39,17 +43,20 @@ def menu_fetch(config: dict):
     Colors.print("purple", f"No Reply Email Addresses Count: {no_reply_count}")
 
     # Save email addresses to file
-    selected_file = filedialog.askopenfilename()
+    selected_csv = filedialog.askopenfilename(
+        title="Choose a CSV to update email addresses",
+        filetypes=[("CSV Files", "*.csv")],
+    )
 
-    if not selected_file:
+    if not selected_csv:
         Colors.print("error", "No file selected.")
         return False
 
     Colors.print(
         "green",
-        f'Selected File: "\x1b]8;;file://{selected_file}/\x1b\\{selected_file}\x1b]8;;\x1b\\"',
+        f'Selected File: "\x1b]8;;file://{selected_csv}/\x1b\\{selected_csv}\x1b]8;;\x1b\\"',
     )
-    filename = fetch.save(selected_file)
+    filename = fetch.save(selected_csv)
     Colors.print(
         "green",
         f'Writing data to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
@@ -61,32 +68,20 @@ def menu_fetch(config: dict):
 def menu_send(config: dict):
     """Send emails to email addresses."""
     send = Send(config)
-    subject = "Test"
-    body = """
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Test</title>
-    </head>
-    <body>
-        <h1>Test</h1>
-        <p>This is a test email.</p>
-    </body>
-</html>
-"""
 
-    # Save email addresses to file
-    selected_file = filedialog.askopenfilename()
+    selected_csv = filedialog.askopenfilename(
+        title="Choose a CSV with Emails to send to", filetypes=[("CSV Files", "*.csv")]
+    )
+    selected_html = filedialog.askopenfilename(
+        title="Choose the HTML Template", filetypes=[("HTML Files", "*.html")]
+    )
 
-    if not selected_file:
+    if not selected_csv:
         Colors.print("error", "No file selected.")
         return False
 
     # Send emails
-    with open(selected_file, "r", encoding="utf-8") as file:
+    with open(selected_csv, "r", encoding="utf-8") as file:
         csv_reader = csv.reader(file)
         email_index = 0
 
@@ -103,6 +98,9 @@ def menu_send(config: dict):
 
         for row in csv_reader:
             to = row[email_index]
+            subject, body = HTML.read_html_file(
+                selected_html, dict(zip(csv_header, row))
+            )
             msg = send.create(to, subject, body)
             if send.send(to, msg):
                 Colors.print("green", f"Email sent to {to}")
@@ -171,6 +169,17 @@ def main():
         return 0
 
     config.read("./script.ini")
+
+    # Menu
+    # menu = Menu(["Fetch Email Addresses", "Send Email", "Exit"])
+    # while True:
+    #     choice = menu.show()
+    #     if choice == 0:
+    #         menu_fetch(config)
+    #     elif choice == 1:
+    #         menu_send(config)
+    #     elif choice == 2:
+    #         break
 
     Colors.print("cyan", "What do you want to do?\n")
     Colors.print("cyan", "\t1. Fetch Email Addresses")
