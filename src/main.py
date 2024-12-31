@@ -4,6 +4,7 @@ import os
 import csv
 
 import configparser
+import time
 import tkinter as tk
 from tkinter import filedialog
 
@@ -56,13 +57,34 @@ def menu_fetch(config: dict):
         "green",
         f'Selected File: "\x1b]8;;file://{selected_csv}/\x1b\\{selected_csv}\x1b]8;;\x1b\\"',
     )
-    filename = fetch.save(selected_csv)
-    Colors.print(
-        "green",
-        f'Writing data to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
-    )
 
-    return True
+    print("\n")
+    Colors.print("cyan", "What do you want to do?\n")
+    Colors.print("cyan", "\t1. Save only no reply email addresses")
+    Colors.print("cyan", "\t2. Save all email addresses")
+    Colors.print("cyan", "\t3. Exit\n")
+
+    choice = input(Colors.colored("green", "Enter your choice: "))
+    print("\n")
+
+    if choice == "1":
+        filename = fetch.save(selected_csv)
+        Colors.print(
+            "green",
+            f'Writing data to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
+        )
+        return True
+
+    if choice == "2":
+        filename = fetch.save(selected_csv, True)
+        Colors.print(
+            "green",
+            f'Writing data to "\x1b]8;;file://{filename}/\x1b\\{filename}\x1b]8;;\x1b\\"',
+        )
+        return True
+
+    Colors.print("error", "Stopping...")
+    return False
 
 
 def menu_send(config: dict):
@@ -97,6 +119,7 @@ def menu_send(config: dict):
                 break
 
         for row in csv_reader:
+            time.sleep(10)
             to = row[email_index]
             subject, body = HTML.read_html_file(
                 selected_html, dict(zip(csv_header, row))
@@ -119,7 +142,7 @@ def menu_send(config: dict):
 
 def main():
     """Main function."""
-
+    os.system("color")
     # Print ASCII Art
     print(
         rf"""
@@ -169,17 +192,6 @@ def main():
         return 0
 
     config.read("./script.ini")
-
-    # Menu
-    # menu = Menu(["Fetch Email Addresses", "Send Email", "Exit"])
-    # while True:
-    #     choice = menu.show()
-    #     if choice == 0:
-    #         menu_fetch(config)
-    #     elif choice == 1:
-    #         menu_send(config)
-    #     elif choice == 2:
-    #         break
 
     Colors.print("cyan", "What do you want to do?\n")
     Colors.print("cyan", "\t1. Fetch Email Addresses")

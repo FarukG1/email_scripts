@@ -75,7 +75,7 @@ class Fetch:
 
         return True
 
-    def save(self, file: str):
+    def save(self, file: str, all_emails: bool = False):
         """Save data to a CSV file."""
 
         csv_header = []
@@ -96,9 +96,14 @@ class Fetch:
                     email_index = index
                     break
 
-            for address in self.sent_addresses.difference(self.inbox_addresses):
-                non_csv_rows.append([None] * len(csv_header))
-                non_csv_rows[-1][email_index] = address
+            if all_emails:
+                for address in self.sent_addresses:
+                    non_csv_rows.append([None] * len(csv_header))
+                    non_csv_rows[-1][email_index] = address
+            else:
+                for address in self.sent_addresses.difference(self.inbox_addresses):
+                    non_csv_rows.append([None] * len(csv_header))
+                    non_csv_rows[-1][email_index] = address
 
             for row in csv_reader:
                 if row[email_index] in self.sent_addresses.difference(
